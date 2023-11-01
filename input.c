@@ -190,6 +190,12 @@ for (i = 0; i < Mnod; i++){
 int id=0;
 while (fgets(data,sizeof(data),Isc) !=NULL){
 	if (data[0] != '*'){
+		for ( i = 0; i < Mlin; i++){
+       if (data[i] == '\n'){
+         data[i] = ' ';             //to resolve from gates fin not getting compared by strcmp correctly
+         }
+         }
+         i = 0;
 		int fin, fout,in,in2;
 		char *name, *type, *sal, *nxtGate;
 		char *token = strtok(data, " ");
@@ -233,7 +239,6 @@ while (fgets(data,sizeof(data),Isc) !=NULL){
 				}
 				else if (AssignType(type) == FROM){
 						token = strtok(NULL, " ");
-						//Node[id].3
 						Node[id].Nfo = 1;
 						Node[id].Nfi = 1;
 						nxtGate = token;
@@ -242,7 +247,7 @@ while (fgets(data,sizeof(data),Isc) !=NULL){
 						#endif
 						int j = 0;
 						for (j = 0; j < Mnod; j++){
-							if (!strcmp(nxtGate,Node[j].Name)){
+							if ((!strcmp(nxtGate,Node[j].Name))){ 
 								InsertEle(&Node[id].Fin,j);
 								InsertEle(&Node[j].Fot,id);
 								break;			

@@ -35,9 +35,14 @@ fclose(Pat);
 #ifdef DEBUG
 	printf("\n\nNptr: %d ",Nptr);
 #endif
+Res = fopen(argv[3],"w");
+int tpr = 0;
+for (tpr = 0 ; tpr < Nptr ; tpr++){
+	logicSim(Node,Tgat,tstPrn[tpr],Res);
+}
+fclose(Res);
 
-logicSim(Node,Tgat,tstPrn[0]);
-PrintGats(Node,Tgat);  
+//PrintGats(Node,Tgat);  
 /***************************************************************************************************/
 
 ClearGat(Node,Tgat);  free(Node);                                      //Clear memeory for all members of Node

@@ -1,0 +1,47 @@
+*  combinational logic example "c880"
+*-------------------------------------------------------------
+*
+*
+*  total number of lines in the netlist ..............   880
+*  simplistically reduced equivalent fault set size =    942
+*        lines from primary input  gates .......    60
+*        lines from primary output gates .......    26
+*        lines from interior gate outputs ......   357
+*        lines from **   125 ** fanout stems ...   437
+*
+*        avg_fanin  =  1.90,     max_fanin  =  4
+*        avg_fanout =  3.50,     max_fanout =  8
+*
+*
+*
+*
+*
+   1     1gat inpt    6   0 >sa0 >sa1
+    8     8gat inpt    4   0 >sa0 >sa1
+  259   259gat inpt    1   0      >sa1
+  260   260gat inpt    1   0      >sa1
+  261   261gat inpt    5   0 >sa0 >sa1
+  262   261f01 from   261gat      >sa1
+  263   261f02 from   261gat      >sa1
+  264   261f03 from   261gat      >sa1
+  265   261f04 from   261gat >sa0
+  266   261f05 from   261gat      >sa1
+  267   267gat inpt    1   0      >sa1
+  268   268gat inpt    1   0
+  269   269gat nand    1   4
+     2     9    14    18
+  270   270gat nand    2   4 >sa0 >sa1
+     3    27    15    19
+  271   270f01 from   270gat >sa0
+  272   270f02 from   270gat >sa0
+  273   273gat and     2   3 >sa0 >sa1
+    30    37    43
+  274   273f01 from   273gat
+  275   273f02 from   273gat >sa0
+  276   276gat and     2   3 >sa0 >sa1
+     4    28    52
+  277   276f01 from   276gat
+  278   276f02 from   276gat
+  279   279gat nand    1   4
+     5    10    53    20
+  

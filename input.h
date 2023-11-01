@@ -22,9 +22,9 @@ Constant Declarations
 #define Mtyp       10		// Max number of nodes/gates type 
 #define Min         9		// Max number of fanin of a gate
 #define Mout       16		// Max number of fanout of a gate
-#define Mpi       233		// Max number of total primary inputs in a circuit/netlist
+#define Mpi       235		// Max number of total primary inputs in a circuit/netlist
 #define Mpo       140		// Max number of total primary outputs in a circuit/netlist
-#define Mpt       51000		// Max number of lines(inputpatterns) in .vec file
+#define Mpt       100		// Max number of lines(inputpatterns) in .vec file
 #define Mft       31		// Max number of lines(stuck at faults) in .fau file
 // GATE TYPE CONSTANTS 
 #define INPT 1			// Primary Input
@@ -37,6 +37,10 @@ Constant Declarations
 #define NOR  8			// NOR 
 #define XOR  9			// XOR 
 #define XNOR 10			// XNOR 
+
+#define XX 2
+#define D 3
+#define DB 4
 
 //#define DEBUG
 //int testInputPtr;
@@ -57,6 +61,13 @@ typedef struct GATE_type
   LIST *Fin,*Fot;                        //Fanin members, Fanout members 
 } GATE;
 int *tstPrn[Mpt];
+
+//3.Structure to declaration for gate & value
+typedef struct GATE_VAL_type
+{
+  int Id;
+  int Val;
+}GATE_VAL;
 /***************************************************************************************************************************
 Functions in declared in input.c
 ****************************************************************************************************************************/
@@ -84,7 +95,7 @@ Functions for reading .isc file
 int AssignType(char *);
 int ReadIsc(FILE *,GATE *);
 int ReadPtrn(FILE *Isc);
-void logicSim(GATE *Node,int Tgat, int testPtrn[]);
+void logicSim(GATE *Node,int Tgat, int testPtrn[], FILE *Ptr);
 void resolveGate (GATE *Node , int i , int *testInputPtr, int testPattern[]);
 /***************************************************************************************************************************
 User Defined Functions in user.c

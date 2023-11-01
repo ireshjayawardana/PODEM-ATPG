@@ -27,7 +27,7 @@
      1     8
    11    11gat nand    2   2 >sa0 >sa1
      9     6
-   14    14fan from    11gat      >sa1
+   14    14fan from    11gat
    15    15fan from    11gat      >sa1
    16    16gat nand    2   2 >sa0 >sa1
      2    14

@@ -196,36 +196,36 @@ switch(type){
 }
 }
 
-// GATE_VAL backTrack(GATE *Node, GATE_VAL gate){
-//  int i = gate.Id;
-//  int num_inversion = 0;
-//  while (Node[i].type != INPT){
-// 	while
+GATE_VAL backTrack(GATE *Node, GATE_VAL gate){
+ int i = gate.Id;
+ int num_inversion = 0;
+ while (Node[i].type != INPT){
+	while
 	
-//  }	
-//  for (i = Id ; i > 0 ; i--){
-// 	if(Node[i].Type!=0){
-// 		int type = Node[i].Type;
-// 		switch(type){
-// 			case INPT :
-// 				return Node[i].Val;
-// 			case 
-// 	}
-//  }
-// }
-// }
+ }	
+ for (i = Id ; i > 0 ; i--){
+	if(Node[i].Type!=0){
+		int type = Node[i].Type;
+		switch(type){
+			case INPT :
+				return Node[i].Val;
+			case 
+	}
+ }
+}
+}
 
-// int forwardImp(GATE *Node, int Id, int Val){
+int forwardImp(GATE *Node, int Id, int Val){
 
-// }
-// int xPathCheck(GATE *Node, int Id, int Val){
+}
+int xPathCheck(GATE *Node, int Id, int Val){
 
-// }
+}
 
-// int objective(GATE *Node, int Id, int Val){
+int objective(GATE *Node, int Id, int Val){
  
-// int nextObj[] = {Id, Val}; 
-// int dFront[] = {};
+int nextObj[] = {Id, Val}; 
+int dFront[] = {};
 
 
-// }
+}

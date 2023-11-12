@@ -199,17 +199,17 @@ switch(type){
 GATE_VAL backTrack(GATE *Node, GATE_VAL gate){
  int i = gate.Id;
  int num_inversion = 0;
- while (Node[i].type != INPT){
-	while
-	
+ while (Node[i].Type != INPT){
+	printf("");
  }	
- for (i = Id ; i > 0 ; i--){
+ for (i = gate.Id ; i > 0 ; i--){
 	if(Node[i].Type!=0){
 		int type = Node[i].Type;
 		switch(type){
 			case INPT :
-				return Node[i].Val;
-			case 
+				return gate;
+			default :
+				printf("ERROR"); 
 	}
  }
 }

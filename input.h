@@ -42,7 +42,9 @@ Constant Declarations
 #define D 3
 #define DB 4
 
-//#define DEBUG
+#define PODUM               //run PODUM ATPG
+//#define ONLYLOGICSIM      //to run the logic simulation and write the results to the outpur .res file
+//#define DEBUG             //print the debug logs
 //int testInputPtr;
 int Npi,Npo,Tgat,Nptr;  
 /***************************************************************************************************************************
@@ -62,12 +64,7 @@ typedef struct GATE_type
 } GATE;
 int *tstPrn[Mpt];
 
-//3.Structure to declaration for gate & value
-typedef struct GATE_VAL_type
-{
-  int Id;
-  int Val;
-}GATE_VAL;
+
 /***************************************************************************************************************************
 Functions in declared in input.c
 ****************************************************************************************************************************/

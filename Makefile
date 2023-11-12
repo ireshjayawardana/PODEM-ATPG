@@ -1,5 +1,5 @@
 CC              = cc
-SRC             = main.c input.c user.c
+SRC             = main.c input.c user.c podum.c
 TARGET          = project
 OBJ             = $(SRC:.c=.o)
 DDDEBUG         =

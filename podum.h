@@ -11,7 +11,7 @@ C Header Files
 #include <complex.h>          //complex arithmetic
 #include <assert.h>           //verify program assertion
 #include <limits.h>           //implementation-dependent constants 
-
+#include "input.h"
 
 //3.Structure to declaration for gate & value
 typedef struct GATE_VAL_type
@@ -20,4 +20,4 @@ typedef struct GATE_VAL_type
   int Val;
 }GATE_VAL;
 
-void podum();
+void podum(GATE *Node, GATE_VAL gate);

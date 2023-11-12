@@ -44,8 +44,12 @@ Res = fopen(argv[3],"w");
 	}
 #endif
 
+GATE_VAL testGate;
+testGate.Id = 3;
+testGate.Val = 1;
+
 #ifdef PODUM
-	podum();
+	podum(Node,testGate);
 #endif
 fclose(Res);
 

@@ -1,17 +1,17 @@
 #include "podum.h"
-#include "input.h"
 
-void podum(){
+void podum(GATE *Node, GATE_VAL fault){
+	printf("testing fault on gate -  %d \n", fault.Id);
+	printf("fault stuck at -  %d \n", fault.Val);
     printf("running podum..\n");
+	//backTrack(Node,fault);
 }
-
-
 
 GATE_VAL backTrack(GATE *Node, GATE_VAL gate){
  int i = gate.Id;
  int num_inversion = 0;
  while (Node[i].Type != INPT){
-	printf("");
+	printf("inp");
  }	
  for (i = gate.Id ; i > 0 ; i--){
 	if(Node[i].Type!=0){

@@ -190,7 +190,8 @@ switch(type){
       Node[i].Val = NOTLUT[Node[i].Val];
 			break;
 	default :
-		printf("");
+		printf("ERROR");
+		break;
 
 
 }

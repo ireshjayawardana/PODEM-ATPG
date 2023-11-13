@@ -1,65 +1,57 @@
 #include "podum.h"
 
+extern int NOTLUT [5] ;
+
 GATE_VAL backTrack(GATE *Node, GATE_VAL gate);
+int invertingGate(int type);
 
 void podum(GATE *Node, GATE_VAL fault){
 	printf("testing fault on gate -  %d \n", fault.Id);
 	printf("fault stuck at -  %d \n", fault.Val);
-	//printf("fault stuck at -  %s \n", Node[fault.Id].Type);
     printf("running podum..\n");
 	backTrack(Node,fault);
 }
 
 GATE_VAL backTrack(GATE *Node, GATE_VAL gate){
- int num_inversion = 0;
+ int num_inversion = invertingGate(Node[gate.Id].Type);	// to get it self's type
  while (Node[gate.Id].Type != INPT){
-	int i = 0;
-	for (i = 0; i < Node[gate.Id].Nfi ; i++){
-		//printf("Name of the id assigned - %d \n", gate.Id);
-		if (Node[Node[gate.Id].Fin->Id].Val == XX){
-			gate.Id = Node[gate.Id].Fin->Id;
-			printf("Name of the id assigned - %d \n", gate.Id);
+	LIST *listPtr;
+	listPtr = Node[gate.Id].Fin;;
+	while(listPtr!=NULL){
+		if ((Node[listPtr->Id].Val == 6) | (Node[listPtr->Id].Val == XX)){ 	// uninitialized or don t care
+			gate.Id = listPtr->Id;
+			#ifdef DEBUG
+				printf("Name of the id assigned - %d \n", gate.Id);
+			#endif
+			if (invertingGate(Node[gate.Id].Type)){
+				num_inversion++;
+			}
+			break;
 		}
+		listPtr=listPtr->Next;
 	}
-	
 
  }	
- printf("Name of the input - %s \n", Node[gate.Id].Name);
- printf("Value of the input - %d", Node[gate.Id].Val);
- return gate;
+ if (num_inversion % 2 != 0 ){
+	Node[gate.Id].Val = NOTLUT[gate.Val];
+ }
+ else {
+	Node[gate.Id].Val = gate.Val;
+ }
+#ifdef DEBUG
+ 	printf("Name of the input - %s \n", Node[gate.Id].Name);
+ 	printf("Value of the input - %d \n", Node[gate.Id].Val);
+#endif
+return gate;
+
 }
 
-int inputX(GATE *Node, int Id){
-
-	// LIST *listPtr;
-	// switch(Node[Id].Type){
-	// case FROM :
-	// 			Node[i].Val = Node[Node[i].Fin->Id].Val;
-	// 	break;
-	// case BUFF :
-	// 		Node[i].Val = Node[Node[i].Fin->Id ].Val;
-	// 	break;
-	// case NOT:
-	// 		Node[i].Val = NOTLUT[Node[Node[i].Fin->Id ].Val];
-	// 	break;
-	// case AND :
-	// 	listPtr = Node[i].Fin;
-	// 	while(listPtr!=NULL){
-  	// 		tempGateVal1 = Node[listPtr->Id].Val;
-	// 		if (gateInPro == 0){
-	// 			tempGateVal2 = tempGateVal1;
-	// 			gateInPro = 1;
-	// 		}
-	// 		else if(gateInPro == 1) {
-	// 			Node[i].Val = ANDLUT[tempGateVal1][tempGateVal2];				
-	// 			gateInPro = 2;
-	// 		}
-	// 		else {
-	// 			Node[i].Val = ANDLUT[tempGateVal1][Node[i].Val];
-	// 		}
-  	// 		listPtr=listPtr->Next; 
-	// 		}
-	// 		break;
+int invertingGate(int type){	// 0 if non inveting else 1
+	if ((type == NAND) | (type == NOR)){
+		return 1;
+	}
+	else
+		return 0;
 }
 
 int forwardImp(GATE *Node, int Id, int Val){

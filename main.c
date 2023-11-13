@@ -45,7 +45,7 @@ Res = fopen(argv[3],"w");
 #endif
 
 GATE_VAL testGate;
-testGate.Id = 3;
+testGate.Id = 10;
 testGate.Val = 1;
 
 #ifdef PODUM

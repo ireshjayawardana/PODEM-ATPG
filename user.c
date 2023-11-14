@@ -63,7 +63,7 @@ return len;
 /***************************************************************************************************/
 
 
-/*resolve a gate
+/*logic sim for a test pattern input
 ***************************************************************************************************/
 void logicSim(GATE *Node,int Tgat, int testPtrn[], FILE *Ptr)
 {
@@ -76,7 +76,7 @@ i=j=k=0;
 int output [Npo];
 for(i=0;i<=Tgat;i++){ 
   	if(Node[i].Type!=0){
-		resolveGate(Node,i,&currentInput,testPtrn);
+		resolveGate(Node,i,&currentInput,testPtrn,1);
 			if (Node[i].Nfo == 0){
       #ifdef DEBUG
 				  printf("%d",Node[i].Val);
@@ -92,7 +92,9 @@ fprintf(Ptr, "\n");
 return;
 }
 
-void resolveGate (GATE *Node , int i , int *testInputPtr, int testPattern[]){
+
+
+void resolveGate (GATE *Node , int i , int *testInputPtr, int testPattern[], int setInputs){
 //int testPattern[] = {1,0,1,1,1};
 int lenTstPtn = Npi;
 int type = Node[i].Type;
@@ -103,8 +105,10 @@ int gateInPro	= 0;
 LIST *listPtr;
 switch(type){
 	case INPT :
+		if (setInputs){
 		Node[i].Val = testPattern[lenTstPtn - *testInputPtr];
 		*testInputPtr = *testInputPtr - 1;
+		}
 		break;
 	case FROM :
 				Node[i].Val = Node[Node[i].Fin->Id].Val;
@@ -190,42 +194,11 @@ switch(type){
       Node[i].Val = NOTLUT[Node[i].Val];
 			break;
 	default :
-		printf("");
+		printf("ERROR");
+		break;
 
 
 }
 }
 
-GATE_VAL backTrack(GATE *Node, GATE_VAL gate){
- int i = gate.Id;
- int num_inversion = 0;
- while (Node[i].type != INPT){
-	while
-	
- }	
- for (i = Id ; i > 0 ; i--){
-	if(Node[i].Type!=0){
-		int type = Node[i].Type;
-		switch(type){
-			case INPT :
-				return Node[i].Val;
-			case 
-	}
- }
-}
-}
 
-int forwardImp(GATE *Node, int Id, int Val){
-
-}
-int xPathCheck(GATE *Node, int Id, int Val){
-
-}
-
-int objective(GATE *Node, int Id, int Val){
- 
-int nextObj[] = {Id, Val}; 
-int dFront[] = {};
-
-
-}

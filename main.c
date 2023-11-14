@@ -1,4 +1,5 @@
 #include "input.h"
+#include "podum.h"
 /***************************************************************************************************
 Command Instructions
 ***************************************************************************************************/
@@ -36,12 +37,22 @@ fclose(Pat);
 	printf("\n\nNptr: %d ",Nptr);
 #endif
 Res = fopen(argv[3],"w");
-int tpr = 0;
-for (tpr = 0 ; tpr < Nptr ; tpr++){
-	logicSim(Node,Tgat,tstPrn[tpr],Res);
-}
-fclose(Res);
+#ifdef ONLYLOGICSIM
+	int tpr = 0;
+	for (tpr = 0 ; tpr < Nptr ; tpr++){
+		logicSim(Node,Tgat,tstPrn[tpr],Res);
+	}
+#endif
 
+GATE_VAL testGate;
+testGate.Id = 10;
+testGate.Val = 0;
+
+#ifdef PODUM
+	podum(Node,testGate);
+#endif
+fclose(Res);
+PrintGats(Node,Tgat); 
 //PrintGats(Node,Tgat);  
 /***************************************************************************************************/
 

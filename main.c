@@ -45,8 +45,8 @@ Res = fopen(argv[3],"w");
 #endif
 
 GATE_VAL testGate;
-testGate.Id = 10;
-testGate.Val = 0;
+testGate.Id = 23;
+testGate.Val = 1;   //stuck at 0 -> 0 sa1 -> 1
 
 #ifdef PODUM
 	podum(Node,testGate);

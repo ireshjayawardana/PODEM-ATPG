@@ -66,7 +66,7 @@ typedef struct GATE_type
   LIST *Fin,*Fot;                        //Fanin members, Fanout members 
 } GATE;
 int *tstPrn[Mpt];
-
+LIST *D_front;
 
 /***************************************************************************************************************************
 Functions in declared in input.c

@@ -68,10 +68,7 @@ return len;
 void logicSim(GATE *Node,int Tgat, int testPtrn[], FILE *Ptr)
 {
 int i,j,k;
-int testPattern[] = {1,1,1,1,0};
 int currentInput = Npi;
-//printf("current input\n, %d ",currentInput);
-//
 i=j=k=0;
 int output [Npo];
 for(i=0;i<=Tgat;i++){ 

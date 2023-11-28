@@ -13,11 +13,19 @@ C Header Files
 #include <limits.h>           //implementation-dependent constants 
 #include "input.h"
 
+
 //3.Structure to declaration for gate & value
 typedef struct GATE_VAL_type
 {
   int Id;
   int Val;
 }GATE_VAL;
+
+typedef enum PODUM_State_type
+{
+  sucess = 1,
+  fail = 0,
+  neutral = 2
+}state;
 
 void podum(GATE *Node, GATE_VAL gate);

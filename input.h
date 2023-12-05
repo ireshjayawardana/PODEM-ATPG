@@ -45,7 +45,8 @@ Constant Declarations
 #define D 3
 #define DB 4
 
-#define PODUM               //run PODUM ATPG
+//#define PODUM               //run PODUM ATPG
+#define PODEMALL
 //#define ONLYLOGICSIM      //to run the logic simulation and write the results to the outpur .res file
 //#define DEBUG             //print the debug logs
 //int testInputPtr;

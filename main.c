@@ -51,8 +51,11 @@ testGate.Val = 1;   //stuck at 0 -> 0 sa1 -> 1
 #ifdef PODUM
 	podum(Node,testGate);
 #endif
+#ifdef PODEMALL
+	podemall(Node);
+#endif
 fclose(Res);
-PrintGats(Node,Tgat); 
+//PrintGats(Node,Tgat); 
 //PrintGats(Node,Tgat);  
 /***************************************************************************************************/
 

@@ -18,17 +18,17 @@ int isDfront(GATE *Node,int id);
 GATE_VAL getObjective(GATE *Node, GATE_VAL gate);
 
 void podemall(GATE *Node){
-	int i =0;
-	for (i = 0; i< Tgat+1 , i++){
-
-		if (Node[i] != 0){
+	int i = 0;
+	for (i = 0; i < Tgat+1 ; i++){
+		if (Node[i].Type != 0){
 			GATE_VAL fault;
 			fault.Id = i;
 			fault.Val = 0;
-			podum(*Node,fault);
+			printf("%d / 0 -> ", i );
+			podum(Node,fault);
 			fault.Val = 1;
-			podum(*Node,fault);
-			
+			printf("%d / 1 -> ", i );
+			podum(Node,fault);
 		}
 	}
 }
@@ -47,9 +47,9 @@ void podum(GATE *Node, GATE_VAL fault){
 	#endif
 	state result = podumRecursion(Node,fault);
 	if (result == sucess){
-		#ifdef PDEBUG
+
 			printPI(Node);
-		#endif
+
 	}
 	else{
 		#ifdef PDEBUG
@@ -69,7 +69,7 @@ void printGate(GATE_VAL gate){
 		printf("get objective gate value- %d \n", gate.Val);
 }
 state podumRecursion(GATE *Node, GATE_VAL fault){
-	printf("loop count - %d \n", loopCount);
+	//printf("loop count - %d \n", loopCount);
 	loopCount++;
 	if (faultAtPO(Node) == sucess){
 		#ifdef PDEBUG
@@ -248,7 +248,7 @@ GATE_VAL getObjective(GATE *Node, GATE_VAL gate){
 		while(listPtr2!=NULL){
 			if (Node[listPtr2->Id].Val == XX){
 				g = listPtr2->Id;	
-				printf("d front gate %d type %d \n", g , Node[g].Type);
+				//printf("d front gate %d type %d \n", g , Node[g].Type);
 	
 				if ((Node[d].Type == INPT) || (Node[d].Type == FROM) || (Node[d].Type == BUFF)){
 					v = gate.Val;
@@ -286,7 +286,7 @@ GATE_VAL getObjective(GATE *Node, GATE_VAL gate){
 ***************************************************************************************************/
 state ForwardTraversal(GATE *Node,int Tgat, GATE_VAL fault, GATE_VAL PI)
 {
-printf("logic sim \n");
+//printf("logic sim \n");
 Node[PI.Id].Val = PI.Val;
 int i,j,k;
 int testPattern[] = {0,0,0,0,0};
@@ -303,16 +303,20 @@ for(i=0;i<=Tgat;i++){
 		// printf(" i - %d \n", i);
 		resolveGate(Node,i,&currentInput,testPattern, 0);
 		if (i == fault.Id){
-			printf("at fault - %d\n",Node[i].Val);
+			#ifdef PDEBUG
+				printf("at fault - %d\n",Node[i].Val);
+			#endif
 			if (Node[i].Val == fault.Val){
 				if (fault.Val == 1){
 					Node[i].Val = DB; //STUCK AT 1
-					printf("set val\n");
+					//printf("set val\n");
 				}
 				else{
 					Node[i].Val = D; //STUCK AT 0
 				}
-				printf("fault activated val - %d \n",Node[i].Val);
+				#ifdef PDEBUG
+					printf("fault activated val - %d \n",Node[i].Val);
+				#endif
 				//printf("val - %d", Node[i].Val);
 				faultActivated = 1; 
 			}
@@ -335,7 +339,7 @@ for(i=0;i<=Tgat;i++){
 
 }
 if (((Node[fault.Id].Val == D) || (Node[fault.Id].Val == DB)) && (D_front==NULL)){
-	printf("fault masked");
+	printf("fault masked \n");
 	return fail;		//fault masked
 }
 return neutral;

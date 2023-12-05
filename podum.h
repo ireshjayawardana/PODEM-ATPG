@@ -25,7 +25,8 @@ typedef enum PODUM_State_type
 {
   sucess = 1,
   fail = 0,
-  neutral = 2
+  neutral = 2,
+  timeout_ = 3
 }state;
 
 void podum(GATE *Node, GATE_VAL gate);

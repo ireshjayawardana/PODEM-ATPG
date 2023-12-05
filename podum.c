@@ -1,4 +1,7 @@
 #include "podum.h"
+#include <time.h>
+ 
+#define TIMEOUT_VALUE 10000
 
 extern int NOTLUT [5] ;
 //					INPUT FROM BUFF NOT AND NAND OR NOR XOR XNOR
@@ -17,6 +20,12 @@ state faultAtPO(GATE *Node);
 int isDfront(GATE *Node,int id);
 GATE_VAL getObjective(GATE *Node, GATE_VAL gate);
 
+//#define PDEBUG
+time_t startTime ;
+
+int masked = 0;
+int timeout = 0;
+
 void podemall(GATE *Node){
 	int i = 0;
 	for (i = 0; i < Tgat+1 ; i++){
@@ -31,8 +40,17 @@ void podemall(GATE *Node){
 			podum(Node,fault);
 		}
 	}
+	float cov = (((float)Tgat - ((float)masked + (float)timeout))/ (float)Tgat) * 100.0 ;
+	
+	printf("Coverage %.6f \n" , cov);
+	float timeoutp = timeout;
+	printf("Timeouts %f \n" , timeoutp);
+	float faliuresp = masked;
+	printf("Failures %f \n" , faliuresp);
 }
+
 void podum(GATE *Node, GATE_VAL fault){
+startTime = clock();
 	#ifdef PDEBUG
 		printf("testing fault on gate -  %d \n", fault.Id);
 		printf("fault stuck at -  %d \n", fault.Val);
@@ -51,7 +69,8 @@ void podum(GATE *Node, GATE_VAL fault){
 			printPI(Node);
 
 	}
-	else{
+	else if (result == fail){
+		masked++;
 		#ifdef PDEBUG
 			printf("The fault at gate  -  %d \n", fault.Id);
 			printf("fault stuck at -  %d \n",fault.Val);
@@ -59,17 +78,23 @@ void podum(GATE *Node, GATE_VAL fault){
 		#endif
 	}
 	
+	
 	//check sucess , faulire and neutral
 	// GATE_VAL gate;
 	// gate = backTrack(Node,fault);
 	// forwardImp(Node,fault);
 }
 void printGate(GATE_VAL gate){
-		printf("get objective gate - %d \n", gate.Id);
-		printf("get objective gate value- %d \n", gate.Val);
+		printf(" gate - %d \n", gate.Id);
+		printf(" gate value- %d \n", gate.Val);
 }
 state podumRecursion(GATE *Node, GATE_VAL fault){
 	//printf("loop count - %d \n", loopCount);
+	if (clock() > startTime + TIMEOUT_VALUE){
+		printf("timeout \n");
+		timeout++;
+		return timeout_;
+	}
 	loopCount++;
 	if (faultAtPO(Node) == sucess){
 		#ifdef PDEBUG
@@ -77,14 +102,17 @@ state podumRecursion(GATE *Node, GATE_VAL fault){
 		#endif
 		return sucess;
 	}
-
 	else {
 		GATE_VAL gate = getObjective(Node,fault);
+		if (gate.Id == 0){
+			return fail;
+		}
 		#ifdef PDEBUG
 			printGate(gate);
-			printf("backtrack run");
+			printf("backtrack run \n");
 		#endif
 		GATE_VAL PIgate = backTrack(Node,gate);
+
 		#ifdef PDEBUG
 			printf("pi gate \n");
 			printGate(PIgate);
@@ -93,9 +121,10 @@ state podumRecursion(GATE *Node, GATE_VAL fault){
 		if (stateLogic == sucess){
 			return sucess;
 		}
-		// else if (stateLogic == fail){
-		// 	return fail;
-		// }
+
+		else if (stateLogic == fail){
+			return fail;
+		}
 		if (stateLogic != fail){
 			#ifdef PDEBUG
 				printf("print d front \n");
@@ -114,6 +143,12 @@ state podumRecursion(GATE *Node, GATE_VAL fault){
 			if (resultPodum == sucess){
 				return sucess;
 			}
+			else {
+				return fail;
+			}
+		}
+		else if (stateLogic == fail){
+			return fail;
 		}
 		// else{
 		PIgate.Val = XX;
@@ -170,6 +205,8 @@ void initalDontCare (GATE *Node){
 GATE_VAL backTrack(GATE *Node, GATE_VAL gate){
  int num_inversion = invertingGate(Node[gate.Id].Type);	// to get it self's type
  while (Node[gate.Id].Type != INPT){
+	//printf("print gate id %d %d %d %d %d \n", gate.Id , Node[gate.Id].Val, Node[gate.Id].Fin->Id ,Node[Node[gate.Id].Fin->Id].Val , Node[gate.Id].Type);
+	if ((gate.Id == 483) && (Node[gate.Id].Val == 1)) exit(0);
 	LIST *listPtr;
 	listPtr = Node[gate.Id].Fin;
 	while(listPtr!=NULL){
@@ -183,6 +220,7 @@ GATE_VAL backTrack(GATE *Node, GATE_VAL gate){
 			}
 			break;
 		}
+		//printf("point 2 \n");
 		listPtr=listPtr->Next;
 	}
 
@@ -320,6 +358,10 @@ for(i=0;i<=Tgat;i++){
 				//printf("val - %d", Node[i].Val);
 				faultActivated = 1; 
 			}
+			else if(Node[i].Val == NOTLUT[fault.Val]){
+				printf("fault masked \n");
+				return fail;
+			}
 		}
 
 		if (isDfront(Node,i)){
@@ -339,7 +381,8 @@ for(i=0;i<=Tgat;i++){
 
 }
 if (((Node[fault.Id].Val == D) || (Node[fault.Id].Val == DB)) && (D_front==NULL)){
-	printf("fault masked \n");
+	printf("d front empty \n");
+	masked++;
 	return fail;		//fault masked
 }
 return neutral;

@@ -17,23 +17,46 @@ state faultAtPO(GATE *Node);
 int isDfront(GATE *Node,int id);
 GATE_VAL getObjective(GATE *Node, GATE_VAL gate);
 
+void podemall(GATE *Node){
+	int i =0;
+	for (i = 0; i< Tgat+1 , i++){
+
+		if (Node[i] != 0){
+			GATE_VAL fault;
+			fault.Id = i;
+			fault.Val = 0;
+			podum(*Node,fault);
+			fault.Val = 1;
+			podum(*Node,fault);
+			
+		}
+	}
+}
 void podum(GATE *Node, GATE_VAL fault){
-	printf("testing fault on gate -  %d \n", fault.Id);
-	printf("fault stuck at -  %d \n", fault.Val);
-    printf("running podum..\n");
+	#ifdef PDEBUG
+		printf("testing fault on gate -  %d \n", fault.Id);
+		printf("fault stuck at -  %d \n", fault.Val);
+		printf("running podum..\n");
+	#endif
 	faultActivated = 0;
 	fault.Val = NOTLUT[fault.Val]; 		//TO GO WITH SA CONVENTION
 	initalDontCare(Node);
 	FreeList(&D_front);
-	printf("init complete..\n");
+	#ifdef PDEBUG
+		printf("init complete..\n");
+	#endif
 	state result = podumRecursion(Node,fault);
 	if (result == sucess){
-		printPI(Node);
+		#ifdef PDEBUG
+			printPI(Node);
+		#endif
 	}
 	else{
-		printf("The fault at gate  -  %d \n", fault.Id);
-		printf("fault stuck at -  %d \n",fault.Val);
-		printf("is untestable..\n");
+		#ifdef PDEBUG
+			printf("The fault at gate  -  %d \n", fault.Id);
+			printf("fault stuck at -  %d \n",fault.Val);
+			printf("is untestable..\n");
+		#endif
 	}
 	
 	//check sucess , faulire and neutral
@@ -49,18 +72,23 @@ state podumRecursion(GATE *Node, GATE_VAL fault){
 	printf("loop count - %d \n", loopCount);
 	loopCount++;
 	if (faultAtPO(Node) == sucess){
-		printf("podeum success");
+		#ifdef PDEBUG
+			printf("podeum success");
+		#endif
 		return sucess;
 	}
 
 	else {
-		printf("get objective run");
 		GATE_VAL gate = getObjective(Node,fault);
-		printGate(gate);
-		printf("backtrack run");
+		#ifdef PDEBUG
+			printGate(gate);
+			printf("backtrack run");
+		#endif
 		GATE_VAL PIgate = backTrack(Node,gate);
-		printf("pi gate \n");
-		printGate(PIgate);
+		#ifdef PDEBUG
+			printf("pi gate \n");
+			printGate(PIgate);
+		#endif
 		state stateLogic = forwardImp(Node ,fault,PIgate);		//as backtrace sets the value to PI
 		if (stateLogic == sucess){
 			return sucess;
@@ -69,8 +97,10 @@ state podumRecursion(GATE *Node, GATE_VAL fault){
 		// 	return fail;
 		// }
 		if (stateLogic != fail){
-			printf("print d front \n");
-			PrintList(D_front);
+			#ifdef PDEBUG
+				printf("print d front \n");
+				PrintList(D_front);
+			#endif
 			state resultPodum = podumRecursion(Node,fault);
 			if (resultPodum == sucess){
 				return sucess;
@@ -113,7 +143,18 @@ void printPI(GATE *Node){
 	int i = 0;
 	for(i=0;i<=Tgat;i++){ 
 		if(Node[i].Type==INPT){
-			printf("%d",Node[i].Val);
+			if (Node[i].Val == XX){
+				printf("X");
+			}
+			else if (Node[i].Val == D){
+				printf("%d",1);
+			}
+			else if (Node[i].Val == DB){
+				printf("%d",0);
+			}
+			else{
+				printf("%d",Node[i].Val);
+			}
 	}
 	}
 	printf("\n");

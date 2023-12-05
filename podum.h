@@ -29,3 +29,4 @@ typedef enum PODUM_State_type
 }state;
 
 void podum(GATE *Node, GATE_VAL gate);
+void podemall(GATE *Node);

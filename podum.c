@@ -2,7 +2,8 @@
 #include <time.h>
  
 #define TIMEOUT_VALUE 10000
-
+#define PRINTTOTERMINAL
+#define PRINTTOFILE
 extern int NOTLUT [5] ;
 //					INPUT FROM BUFF NOT AND NAND OR NOR XOR XNOR
 int NONCTRLLUT [10]= { 1, 1,1,1,0,1,0,1,1,1 };
@@ -33,10 +34,14 @@ void podemall(GATE *Node){
 			GATE_VAL fault;
 			fault.Id = i;
 			fault.Val = 0;
-			printf("%d / 0 -> ", i );
+			#ifdef PRINTTOTERMINAL
+				printf("%d / 0 -> ", i );
+			#endif
 			podum(Node,fault);
 			fault.Val = 1;
-			printf("%d / 1 -> ", i );
+			#ifdef PRINTTOTERMINAL
+				printf("%d / 1 -> ", i );
+			#endif
 			podum(Node,fault);
 		}
 	}
@@ -179,16 +184,24 @@ void printPI(GATE *Node){
 	for(i=0;i<=Tgat;i++){ 
 		if(Node[i].Type==INPT){
 			if (Node[i].Val == XX){
-				printf("X");
+				#ifdef PRINTTOTERMINAL
+					printf("X");
+				#endif
 			}
 			else if (Node[i].Val == D){
-				printf("%d",1);
+				#ifdef PRINTTOTERMINAL
+					printf("%d",1);
+				#endif
 			}
 			else if (Node[i].Val == DB){
-				printf("%d",0);
+				#ifdef PRINTTOTERMINAL
+					printf("%d",0);
+				#endif
 			}
 			else{
-				printf("%d",Node[i].Val);
+				#ifdef PRINTTOTERMINAL
+					printf("%d",Node[i].Val);
+				#endif
 			}
 	}
 	}

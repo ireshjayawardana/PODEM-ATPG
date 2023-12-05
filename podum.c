@@ -1,8 +1,8 @@
 #include "podum.h"
 #include <time.h>
  
-#define TIMEOUT_VALUE 10000
-#define PRINTTOTERMINAL
+#define TIMEOUT_VALUE 1000000
+//#define PRINTTOTERMINAL
 #define PRINTTOFILE
 extern int NOTLUT [5] ;
 //					INPUT FROM BUFF NOT AND NAND OR NOR XOR XNOR
@@ -21,7 +21,7 @@ state faultAtPO(GATE *Node);
 int isDfront(GATE *Node,int id);
 GATE_VAL getObjective(GATE *Node, GATE_VAL gate);
 
-//#define PDEBUG
+#define PDEBUG
 time_t startTime ;
 
 int masked = 0;
@@ -29,7 +29,7 @@ int timeout = 0;
 
 void podemall(GATE *Node){
 	int i = 0;
-	for (i = 0; i < Tgat+1 ; i++){
+	for (i = 193; i < Tgat+1 ; i++){
 		if (Node[i].Type != 0){
 			GATE_VAL fault;
 			fault.Id = i;
@@ -76,6 +76,11 @@ startTime = clock();
 	}
 	else if (result == fail){
 		masked++;
+		
+			printf("The fault at gate  -  %d \n", fault.Id);
+			printf("fault stuck at -  %d \n",fault.Val);
+			printf("is untestable..\n");
+			exit(0);
 		#ifdef PDEBUG
 			printf("The fault at gate  -  %d \n", fault.Id);
 			printf("fault stuck at -  %d \n",fault.Val);
@@ -130,7 +135,7 @@ state podumRecursion(GATE *Node, GATE_VAL fault){
 		else if (stateLogic == fail){
 			return fail;
 		}
-		if (stateLogic != fail){
+		//if (stateLogic != fail){
 			#ifdef PDEBUG
 				printf("print d front \n");
 				PrintList(D_front);
@@ -139,7 +144,7 @@ state podumRecursion(GATE *Node, GATE_VAL fault){
 			if (resultPodum == sucess){
 				return sucess;
 			}
-		}
+		//}
 		// else{
 		PIgate.Val = NOTLUT[PIgate.Val];
 		stateLogic = forwardImp(Node,gate,PIgate);
@@ -158,7 +163,16 @@ state podumRecursion(GATE *Node, GATE_VAL fault){
 		// else{
 		PIgate.Val = XX;
 		stateLogic = forwardImp(Node,gate,PIgate);
-		return fail;
+		if (stateLogic == sucess){
+			return sucess;;
+		}
+		else if (stateLogic == fail){
+			return fail;
+		}
+		else {
+			return neutral;
+		}
+		//return fail;
 			// }
 			
 		// }
@@ -203,9 +217,11 @@ void printPI(GATE *Node){
 					printf("%d",Node[i].Val);
 				#endif
 			}
+		}
 	}
-	}
-	printf("\n");
+	#ifdef PRINTTOTERMINAL
+		printf("\n");
+	#endif
 }
 void initalDontCare (GATE *Node){
 	int i = 0;
@@ -219,7 +235,7 @@ GATE_VAL backTrack(GATE *Node, GATE_VAL gate){
  int num_inversion = invertingGate(Node[gate.Id].Type);	// to get it self's type
  while (Node[gate.Id].Type != INPT){
 	//printf("print gate id %d %d %d %d %d \n", gate.Id , Node[gate.Id].Val, Node[gate.Id].Fin->Id ,Node[Node[gate.Id].Fin->Id].Val , Node[gate.Id].Type);
-	if ((gate.Id == 483) && (Node[gate.Id].Val == 1)) exit(0);
+	//if ((gate.Id == 483) && (Node[gate.Id].Val == 1)) exit(0);
 	LIST *listPtr;
 	listPtr = Node[gate.Id].Fin;
 	while(listPtr!=NULL){
@@ -311,7 +327,7 @@ GATE_VAL getObjective(GATE *Node, GATE_VAL gate){
 					v = 0;
 				}
 				else if ((Node[d].Type == NOT) || (Node[d].Type == XOR) || (Node[d].Type == XNOR)){
-					v = NOTLUT[v];
+					v = NOTLUT[gate.Val];
 				}
 				break;
 			}
@@ -373,6 +389,7 @@ for(i=0;i<=Tgat;i++){
 			}
 			else if(Node[i].Val == NOTLUT[fault.Val]){
 				printf("fault masked \n");
+				faultActivated = 0;
 				return fail;
 			}
 		}
@@ -388,14 +405,13 @@ for(i=0;i<=Tgat;i++){
 				return sucess;
 			}
 		}
-
-
 	}
 
 }
 if (((Node[fault.Id].Val == D) || (Node[fault.Id].Val == DB)) && (D_front==NULL)){
 	printf("d front empty \n");
-	masked++;
+	//masked++;
+	//exit(0);
 	return fail;		//fault masked
 }
 return neutral;

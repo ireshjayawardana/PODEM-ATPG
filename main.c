@@ -1,4 +1,5 @@
 #include "input.h"
+#include "podum.h"
 /***************************************************************************************************
 Command Instructions
 ***************************************************************************************************/
@@ -9,7 +10,7 @@ Command Instructions
 ***************************************************************************************************/
 int main(int argc,char **argv)
 {
-FILE *Isc,*Pat,*Res;                  //File pointers used for .isc, .pattern, and .res files
+                //File pointers used for .isc, .pattern, and .res files
 //int Npi,Npo,Tgat,Nptr;                     //Tot no of PIs,Pos,Maxid,Tot no of patterns in.vec,.fau
 GATE *Node;                           //Structure to store the ckt given in .isc file 
 clock_t Start,End;                    //Clock variables to calculate the Cputime
@@ -36,12 +37,25 @@ fclose(Pat);
 	printf("\n\nNptr: %d ",Nptr);
 #endif
 Res = fopen(argv[3],"w");
-int tpr = 0;
-for (tpr = 0 ; tpr < Nptr ; tpr++){
-	logicSim(Node,Tgat,tstPrn[tpr],Res);
-}
-fclose(Res);
+#ifdef ONLYLOGICSIM
+	int tpr = 0;
+	for (tpr = 0 ; tpr < Nptr ; tpr++){
+		logicSim(Node,Tgat,tstPrn[tpr],Res);
+	}
+#endif
 
+GATE_VAL testGate;
+testGate.Id = 23;
+testGate.Val = 1;   //stuck at 0 -> 0 sa1 -> 1
+
+#ifdef PODUM
+	podum(Node,testGate);
+#endif
+#ifdef PODEMALL
+	podemall(Node);
+#endif
+fclose(Res);
+//PrintGats(Node,Tgat); 
 //PrintGats(Node,Tgat);  
 /***************************************************************************************************/
 

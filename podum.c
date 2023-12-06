@@ -1,7 +1,7 @@
 #include "podum.h"
 #include <time.h>
  
-#define TIMEOUT_VALUE 1000000
+#define TIMEOUT_VALUE 10000
 //#define PRINTTOTERMINAL
 #define PRINTTOFILE
 extern int NOTLUT [5] ;
@@ -29,7 +29,7 @@ int timeout = 0;
 
 void podemall(GATE *Node){
 	int i = 0;
-	for (i = 193; i < Tgat+1 ; i++){
+	for (i = 0; i < Tgat+1 ; i++){
 		if (Node[i].Type != 0){
 			GATE_VAL fault;
 			fault.Id = i;
@@ -80,7 +80,8 @@ startTime = clock();
 			printf("The fault at gate  -  %d \n", fault.Id);
 			printf("fault stuck at -  %d \n",fault.Val);
 			printf("is untestable..\n");
-			exit(0);
+			//PrintGats(Node,Tgat);
+			//exit(0);
 		#ifdef PDEBUG
 			printf("The fault at gate  -  %d \n", fault.Id);
 			printf("fault stuck at -  %d \n",fault.Val);
@@ -98,87 +99,75 @@ void printGate(GATE_VAL gate){
 		printf(" gate - %d \n", gate.Id);
 		printf(" gate value- %d \n", gate.Val);
 }
+// 
 state podumRecursion(GATE *Node, GATE_VAL fault){
-	//printf("loop count - %d \n", loopCount);
-	if (clock() > startTime + TIMEOUT_VALUE){
+	state resultPodum;
+printf("podum top \n");
+		if (clock() > startTime + TIMEOUT_VALUE){
 		printf("timeout \n");
 		timeout++;
 		return timeout_;
-	}
-	loopCount++;
-	if (faultAtPO(Node) == sucess){
-		#ifdef PDEBUG
-			printf("podeum success");
-		#endif
-		return sucess;
-	}
-	else {
+		}
+
 		GATE_VAL gate = getObjective(Node,fault);
+		printGate(gate);
+		printf("get objective \n");
 		if (gate.Id == 0){
 			return fail;
 		}
-		#ifdef PDEBUG
-			printGate(gate);
-			printf("backtrack run \n");
-		#endif
+		if (Node[fault.Id].Val == fault.Val){
+			printf("yes");
+		}
 		GATE_VAL PIgate = backTrack(Node,gate);
-
-		#ifdef PDEBUG
-			printf("pi gate \n");
-			printGate(PIgate);
-		#endif
+	
 		state stateLogic = forwardImp(Node ,fault,PIgate);		//as backtrace sets the value to PI
+		printf("logic sim - 1 \n");
 		if (stateLogic == sucess){
 			return sucess;
 		}
-
-		else if (stateLogic == fail){
-			return fail;
-		}
-		//if (stateLogic != fail){
-			#ifdef PDEBUG
-				printf("print d front \n");
-				PrintList(D_front);
-			#endif
-			state resultPodum = podumRecursion(Node,fault);
-			if (resultPodum == sucess){
-				return sucess;
-			}
-		//}
-		// else{
-		PIgate.Val = NOTLUT[PIgate.Val];
-		stateLogic = forwardImp(Node,gate,PIgate);
+		
+		// else if (stateLogic == fail){
+		// 	return fail;
+		// }
 		if (stateLogic != fail){
-			state resultPodum = podumRecursion(Node,fault);
-			if (resultPodum == sucess){
+			resultPodum = podumRecursion(Node,fault);
+		}
+		if (resultPodum == sucess){
+			return sucess;
+		}
+		// else if (resultPodum == fail){
+		// 	return fail;
+		// }
+
+		printf("tring with inverted fault val \n");
+		PIgate.Val = NOTLUT[PIgate.Val];
+		stateLogic = forwardImp(Node,fault,PIgate);
+		printf("logic sim - 2 \n");
+			if (stateLogic == sucess){
 				return sucess;
 			}
-			else {
-				return fail;
+			
+			// else if (stateLogic == fail){
+			// 	return fail;
+			else if (stateLogic != fail){
+				resultPodum = podumRecursion(Node,fault);
 			}
+		if (resultPodum == sucess){
+			return sucess;
 		}
-		else if (stateLogic == fail){
-			return fail;
-		}
-		// else{
+		// else if (resultPodum == fail){
+		// 	return fail;
+		// }
 		PIgate.Val = XX;
-		stateLogic = forwardImp(Node,gate,PIgate);
+		stateLogic = forwardImp(Node,fault,PIgate);
+		printf("logic sim - 3\n");
 		if (stateLogic == sucess){
 			return sucess;;
 		}
 		else if (stateLogic == fail){
 			return fail;
 		}
-		else {
-			return neutral;
-		}
-		//return fail;
-			// }
-			
-		// }
-		
-	}
-	return fail;
+return fail;
 }
 
 state faultAtPO(GATE *Node){
@@ -387,10 +376,15 @@ for(i=0;i<=Tgat;i++){
 				//printf("val - %d", Node[i].Val);
 				faultActivated = 1; 
 			}
-			else if(Node[i].Val == NOTLUT[fault.Val]){
+			else if (Node[i].Val == NOTLUT[fault.Val]){
 				printf("fault masked \n");
 				faultActivated = 0;
 				return fail;
+			}
+			else if ((Node[i].Val == XX) ){
+				printf("fault masked \n");
+				faultActivated = 0;
+				return neutral;
 			}
 		}
 
@@ -423,6 +417,9 @@ return neutral;
 }
 
 int isDfront(GATE *Node,int id){
+		if (Node[id].Val !=  XX){
+			return 0;
+		}
 		LIST *listPtr = Node[id].Fin;
 		int D_front_detected = 0;
 		int X_detected = 0;

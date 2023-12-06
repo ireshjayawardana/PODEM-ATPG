@@ -1,0 +1,37 @@
+1 / 0 -> SUCCESS 
+1 / 1 -> SUCCESS 
+2 / 0 -> SUCCESS 
+2 / 1 -> SUCCESS 
+3 / 0 -> SUCCESS 
+3 / 1 -> SUCCESS 
+6 / 0 -> SUCCESS 
+6 / 1 -> SUCCESS 
+7 / 0 -> SUCCESS 
+7 / 1 -> SUCCESS 
+8 / 0 -> SUCCESS 
+8 / 1 -> SUCCESS 
+9 / 0 -> SUCCESS 
+9 / 1 -> SUCCESS 
+10 / 0 -> SUCCESS 
+10 / 1 -> SUCCESS 
+11 / 0 -> SUCCESS 
+11 / 1 -> SUCCESS 
+14 / 0 -> SUCCESS 
+14 / 1 -> SUCCESS 
+15 / 0 -> SUCCESS 
+15 / 1 -> SUCCESS 
+16 / 0 -> SUCCESS 
+16 / 1 -> SUCCESS 
+19 / 0 -> SUCCESS 
+19 / 1 -> SUCCESS 
+20 / 0 -> SUCCESS 
+20 / 1 -> SUCCESS 
+21 / 0 -> SUCCESS 
+21 / 1 -> SUCCESS 
+22 / 0 -> SUCCESS 
+22 / 1 -> SUCCESS 
+23 / 0 -> SUCCESS 
+23 / 1 -> SUCCESS 
+Coverage 100.000000 
+Timeouts 0.000000 
+Failures 0.000000 

@@ -1,12 +1,15 @@
 #include "podum.h"
 #include <time.h>
  
-#define TIMEOUT_VALUE 1000000000
+#define TIMEOUT_VALUE 1000000
 //#define PRINTTOTERMINAL
 #define PRINTTOFILE
 extern int NOTLUT [5] ;
 //					INPUT FROM BUFF NOT AND NAND OR NOR XOR XNOR
 int NONCTRLLUT [10]= { 1, 1,1,1,0,1,0,1,1,1 };
+
+extern FILE *Res;
+FILE *Ptr;
 
 int loopCount = 0;
 int faultActivated = 0;
@@ -28,6 +31,7 @@ int masked = 0;
 int timeout = 0;
 
 void podemall(GATE *Node){
+	Ptr = Res;
 	int i = 0;
 	for (i = 0; i < Tgat+1 ; i++){
 		if (Node[i].Type != 0){
@@ -46,7 +50,7 @@ void podemall(GATE *Node){
 				printf("%d / 1 -> ", i );
 			#endif
 			#ifdef PRINTTOFILE
-				fprintf(Ptr, "%d / 0 -> ", i);
+				fprintf(Ptr, "%d / 1 -> ", i);
 			#endif
 			podum(Node,fault);
 		}
@@ -97,12 +101,16 @@ startTime = clock();
 			printf("is untestable..\n");
 		#endif
 	}
+	else if (result == timeout_){
+		#ifdef PDEBUG
+			printf("timeout \n");
+		#endif
+		#ifdef PRINTTOFILE
+			fprintf(Ptr, "TIMEOUT \n");
+		#endif
+		timeout++;
+	}
 	
-	
-	//check sucess , faulire and neutral
-	// GATE_VAL gate;
-	// gate = backTrack(Node,fault);
-	// forwardImp(Node,fault);
 }
 void printGate(GATE_VAL gate){
 		printf(" gate - %d \n", gate.Id);
@@ -115,13 +123,6 @@ state podumRecursion(GATE *Node, GATE_VAL fault){
 			printf("podum top \n");
 		#endif
 		if (clock() > startTime + TIMEOUT_VALUE){
-		#ifdef PDEBUG
-			printf("timeout \n");
-		#endif
-		#ifdef PRINTTOFILE
-			fprintf(Ptr, "TIMEOUT \n");
-		#endif
-		timeout++;
 		return timeout_;
 		}
 
@@ -143,19 +144,12 @@ state podumRecursion(GATE *Node, GATE_VAL fault){
 		if (stateLogic == sucess){
 			return sucess;
 		}
-		
-		// else if (stateLogic == fail){
-		// 	return fail;
-		// }
 		if (stateLogic != fail){
 			resultPodum = podumRecursion(Node,fault);
 		}
 		if (resultPodum == sucess){
 			return sucess;
 		}
-		// else if (resultPodum == fail){
-		// 	return fail;
-		// }
 		#ifdef PDEBUG
 			printf("tring with inverted fault val \n");
 		#endif
@@ -167,18 +161,12 @@ state podumRecursion(GATE *Node, GATE_VAL fault){
 			if (stateLogic == sucess){
 				return sucess;
 			}
-			
-			// else if (stateLogic == fail){
-			// 	return fail;
 			else if (stateLogic != fail){
 				resultPodum = podumRecursion(Node,fault);
 			}
 		if (resultPodum == sucess){
 			return sucess;
 		}
-		// else if (resultPodum == fail){
-		// 	return fail;
-		// }
 		PIgate.Val = XX;
 		stateLogic = forwardImp(Node,fault,PIgate);
 		#ifdef PDEBUG

@@ -100,6 +100,7 @@ void logicSim(GATE *Node,int Tgat, int testPtrn[], FILE *Ptr);
 void resolveGate (GATE *Node , int i , int *testInputPtr, int testPattern[], int setInputs);
 
 
+FILE *Isc,*Pat,*Res;  
 /***************************************************************************************************************************
 User Defined Functions in user.c
 ****************************************************************************************************************************/

@@ -10,7 +10,7 @@ Command Instructions
 ***************************************************************************************************/
 int main(int argc,char **argv)
 {
-FILE *Isc,*Pat,*Res;                  //File pointers used for .isc, .pattern, and .res files
+                //File pointers used for .isc, .pattern, and .res files
 //int Npi,Npo,Tgat,Nptr;                     //Tot no of PIs,Pos,Maxid,Tot no of patterns in.vec,.fau
 GATE *Node;                           //Structure to store the ckt given in .isc file 
 clock_t Start,End;                    //Clock variables to calculate the Cputime

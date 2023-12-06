@@ -37,10 +37,16 @@ void podemall(GATE *Node){
 			#ifdef PRINTTOTERMINAL
 				printf("%d / 0 -> ", i );
 			#endif
+			#ifdef PRINTTOFILE
+				fprintf(Ptr, "%d / 0 -> ", i);
+			#endif
 			podum(Node,fault);
 			fault.Val = 1;
 			#ifdef PRINTTOTERMINAL
 				printf("%d / 1 -> ", i );
+			#endif
+			#ifdef PRINTTOFILE
+				fprintf(Ptr, "%d / 0 -> ", i);
 			#endif
 			podum(Node,fault);
 		}
@@ -48,10 +54,13 @@ void podemall(GATE *Node){
 	float cov = (((float)Tgat - ((float)masked + (float)timeout))/ (float)Tgat) * 100.0 ;
 	
 	printf("Coverage %.6f \n" , cov);
+	fprintf(Ptr, "Coverage %.6f \n" , cov);
 	float timeoutp = timeout;
 	printf("Timeouts %f \n" , timeoutp);
+	fprintf(Ptr, "Timeouts %f \n" , timeoutp);
 	float faliuresp = masked;
 	printf("Failures %f \n" , faliuresp);
+	fprintf(Ptr, "Failures %f \n" , faliuresp);
 }
 
 void podum(GATE *Node, GATE_VAL fault){
@@ -70,13 +79,17 @@ startTime = clock();
 	#endif
 	state result = podumRecursion(Node,fault);
 	if (result == sucess){
-
+			#ifdef PRINTTOFILE
+				fprintf(Ptr, "SUCCESS \n");
+			#endif
 			printPI(Node);
 
 	}
 	else if (result == fail){
 		masked++;
-	
+			#ifdef PRINTTOFILE
+				fprintf(Ptr, "FAILURE \n");
+			#endif
 			//exit(0);
 		#ifdef PDEBUG
 			printf("The fault at gate  -  %d \n", fault.Id);
@@ -104,6 +117,9 @@ state podumRecursion(GATE *Node, GATE_VAL fault){
 		if (clock() > startTime + TIMEOUT_VALUE){
 		#ifdef PDEBUG
 			printf("timeout \n");
+		#endif
+		#ifdef PRINTTOFILE
+			fprintf(Ptr, "TIMEOUT \n");
 		#endif
 		timeout++;
 		return timeout_;

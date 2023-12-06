@@ -55,7 +55,8 @@ void podemall(GATE *Node){
 			podum(Node,fault);
 		}
 	}
-	float cov = (((float)Tgat - ((float)masked + (float)timeout))/ (float)Tgat) * 100.0 ;
+	float totFaults = 2 * Tgat;
+	float cov = (((float)totFaults - ((float)masked + (float)timeout))/ (float)totFaults) * 100.0 ;
 	
 	printf("Coverage %.6f \n" , cov);
 	fprintf(Ptr, "Coverage %.6f \n" , cov);

@@ -1,7 +1,7 @@
 #include "podum.h"
 #include <time.h>
  
-#define TIMEOUT_VALUE 10000
+#define TIMEOUT_VALUE 1000000000
 //#define PRINTTOTERMINAL
 #define PRINTTOFILE
 extern int NOTLUT [5] ;
@@ -21,7 +21,7 @@ state faultAtPO(GATE *Node);
 int isDfront(GATE *Node,int id);
 GATE_VAL getObjective(GATE *Node, GATE_VAL gate);
 
-#define PDEBUG
+//#define PDEBUG
 time_t startTime ;
 
 int masked = 0;
@@ -76,11 +76,7 @@ startTime = clock();
 	}
 	else if (result == fail){
 		masked++;
-		
-			printf("The fault at gate  -  %d \n", fault.Id);
-			printf("fault stuck at -  %d \n",fault.Val);
-			printf("is untestable..\n");
-			//PrintGats(Node,Tgat);
+	
 			//exit(0);
 		#ifdef PDEBUG
 			printf("The fault at gate  -  %d \n", fault.Id);
@@ -102,26 +98,32 @@ void printGate(GATE_VAL gate){
 // 
 state podumRecursion(GATE *Node, GATE_VAL fault){
 	state resultPodum;
-printf("podum top \n");
+		#ifdef PDEBUG
+			printf("podum top \n");
+		#endif
 		if (clock() > startTime + TIMEOUT_VALUE){
-		printf("timeout \n");
+		#ifdef PDEBUG
+			printf("timeout \n");
+		#endif
 		timeout++;
 		return timeout_;
 		}
 
 		GATE_VAL gate = getObjective(Node,fault);
-		printGate(gate);
-		printf("get objective \n");
+		#ifdef PDEBUG
+			printGate(gate);
+			printf("get objective \n");
+		#endif
+		
 		if (gate.Id == 0){
 			return fail;
-		}
-		if (Node[fault.Id].Val == fault.Val){
-			printf("yes");
 		}
 		GATE_VAL PIgate = backTrack(Node,gate);
 	
 		state stateLogic = forwardImp(Node ,fault,PIgate);		//as backtrace sets the value to PI
-		printf("logic sim - 1 \n");
+		#ifdef PDEBUG
+			printf("logic sim - 1 \n");
+		#endif
 		if (stateLogic == sucess){
 			return sucess;
 		}
@@ -138,11 +140,14 @@ printf("podum top \n");
 		// else if (resultPodum == fail){
 		// 	return fail;
 		// }
-
-		printf("tring with inverted fault val \n");
+		#ifdef PDEBUG
+			printf("tring with inverted fault val \n");
+		#endif
 		PIgate.Val = NOTLUT[PIgate.Val];
 		stateLogic = forwardImp(Node,fault,PIgate);
-		printf("logic sim - 2 \n");
+		#ifdef PDEBUG
+			printf("logic sim - 2 \n");
+		#endif
 			if (stateLogic == sucess){
 				return sucess;
 			}
@@ -160,7 +165,9 @@ printf("podum top \n");
 		// }
 		PIgate.Val = XX;
 		stateLogic = forwardImp(Node,fault,PIgate);
-		printf("logic sim - 3\n");
+		#ifdef PDEBUG
+			printf("logic sim - 3\n");
+		#endif
 		if (stateLogic == sucess){
 			return sucess;;
 		}
@@ -377,12 +384,16 @@ for(i=0;i<=Tgat;i++){
 				faultActivated = 1; 
 			}
 			else if (Node[i].Val == NOTLUT[fault.Val]){
-				printf("fault masked \n");
+				#ifdef PDEBUG
+					printf("fault masked \n");
+				#endif
 				faultActivated = 0;
 				return fail;
-			}
+			} 
 			else if ((Node[i].Val == XX) ){
-				printf("fault masked \n");
+				#ifdef PDEBUG
+					printf("fault masked \n");
+				#endif
 				faultActivated = 0;
 				return neutral;
 			}
@@ -403,7 +414,9 @@ for(i=0;i<=Tgat;i++){
 
 }
 if (((Node[fault.Id].Val == D) || (Node[fault.Id].Val == DB)) && (D_front==NULL)){
-	printf("d front empty \n");
+	#ifdef PDEBUG
+		printf("d front empty \n");
+	#endif
 	//masked++;
 	//exit(0);
 	return fail;		//fault masked

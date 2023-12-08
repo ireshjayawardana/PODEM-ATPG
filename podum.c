@@ -1,7 +1,7 @@
 #include "podum.h"
 #include <time.h>
  
-#define TIMEOUT_VALUE 1000000
+#define TIMEOUT_VALUE 100000
 //#define PRINTTOTERMINAL
 #define PRINTTOFILE
 extern int NOTLUT [5] ;
@@ -150,6 +150,9 @@ state podumRecursion(GATE *Node, GATE_VAL fault){
 		if (resultPodum == sucess){
 			return sucess;
 		}
+		else if (resultPodum == timeout_){
+			return timeout_;
+		}
 		#ifdef PDEBUG
 			printf("tring with inverted fault val \n");
 		#endif
@@ -158,14 +161,17 @@ state podumRecursion(GATE *Node, GATE_VAL fault){
 		#ifdef PDEBUG
 			printf("logic sim - 2 \n");
 		#endif
-			if (stateLogic == sucess){
-				return sucess;
-			}
-			else if (stateLogic != fail){
-				resultPodum = podumRecursion(Node,fault);
-			}
+		if (stateLogic == sucess){
+			return sucess;
+		}
+		else if (stateLogic != fail){
+			resultPodum = podumRecursion(Node,fault);
+		}
 		if (resultPodum == sucess){
 			return sucess;
+		}
+		else if (resultPodum == timeout_){
+			return timeout_;
 		}
 		PIgate.Val = XX;
 		stateLogic = forwardImp(Node,fault,PIgate);

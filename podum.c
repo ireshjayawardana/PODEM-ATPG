@@ -1,7 +1,7 @@
 #include "podum.h"
 #include <time.h>
  
-#define TIMEOUT_VALUE 1000000
+#define TIMEOUT_VALUE 0.2
 //#define PRINTTOTERMINAL
 #define PRINTTOFILE
 extern int NOTLUT [5] ;
@@ -29,7 +29,8 @@ time_t startTime ;
 
 int masked = 0;
 int timeout = 0;
-
+double start_time;
+/*iterates the podem algo throughout the circuit*/
 void podemall(GATE *Node){
 	Ptr = Res;
 	int i = 0;
@@ -67,9 +68,9 @@ void podemall(GATE *Node){
 	printf("Failures %f \n" , faliuresp);
 	fprintf(Ptr, "Failures %f \n" , faliuresp);
 }
-
+/*Handles the fault injection to recursion and its final return states*/
 void podum(GATE *Node, GATE_VAL fault){
-startTime = clock();
+	start_time = (double)clock()/CLOCKS_PER_SEC;
 	#ifdef PDEBUG
 		printf("testing fault on gate -  %d \n", fault.Id);
 		printf("fault stuck at -  %d \n", fault.Val);
@@ -113,75 +114,80 @@ startTime = clock();
 	}
 	
 }
+/*print out GATE_VAL type as gate id and its value*/
 void printGate(GATE_VAL gate){
 		printf(" gate - %d \n", gate.Id);
 		printf(" gate value- %d \n", gate.Val);
 }
-// 
+/*This is the podem resursion that will recursively activate the fault and propergate it*/
 state podumRecursion(GATE *Node, GATE_VAL fault){
-	state resultPodum;
-		#ifdef PDEBUG
-			printf("podum top \n");
-		#endif
-		if (clock() > startTime + TIMEOUT_VALUE){
-		return timeout_;
-		}
 
-		GATE_VAL gate = getObjective(Node,fault);
-		#ifdef PDEBUG
-			printGate(gate);
-			printf("get objective \n");
-		#endif
-		
-		if (gate.Id == 0){
-			return fail;
-		}
-		GATE_VAL PIgate = backTrack(Node,gate);
+	double clock_end = (double)clock()/CLOCKS_PER_SEC;
+	double duration = (double)(clock_end - start_time);
+	state resultPodum;
+
+	#ifdef PDEBUG
+		printf("podum top \n");
+	#endif
+	if (duration > TIMEOUT_VALUE){
+		return timeout_;
+	}
+
+	GATE_VAL gate = getObjective(Node,fault);
+	#ifdef PDEBUG
+		printGate(gate);
+		printf("get objective \n");
+	#endif
+	if (gate.Id == 0){
+		return fail;
+	}
+	GATE_VAL PIgate = backTrack(Node,gate);
+
+	state stateLogic = forwardImp(Node ,fault,PIgate);		//as backtrace sets the value to PI
 	
-		state stateLogic = forwardImp(Node ,fault,PIgate);		//as backtrace sets the value to PI
-		#ifdef PDEBUG
-			printf("logic sim - 1 \n");
-		#endif
-		if (stateLogic == sucess){
-			return sucess;
-		}
-		if (stateLogic != fail){
-			resultPodum = podumRecursion(Node,fault);
-		}
-		if (resultPodum == sucess){
-			return sucess;
-		}
-		#ifdef PDEBUG
-			printf("tring with inverted fault val \n");
-		#endif
-		PIgate.Val = NOTLUT[PIgate.Val];
-		stateLogic = forwardImp(Node,fault,PIgate);
-		#ifdef PDEBUG
-			printf("logic sim - 2 \n");
-		#endif
-			if (stateLogic == sucess){
-				return sucess;
-			}
-			else if (stateLogic != fail){
-				resultPodum = podumRecursion(Node,fault);
-			}
-		if (resultPodum == sucess){
-			return sucess;
-		}
-		PIgate.Val = XX;
-		stateLogic = forwardImp(Node,fault,PIgate);
-		#ifdef PDEBUG
-			printf("logic sim - 3\n");
-		#endif
-		if (stateLogic == sucess){
-			return sucess;;
-		}
-		else if (stateLogic == fail){
-			return fail;
-		}
+	#ifdef PDEBUG
+		printf("logic sim - 1 \n");
+	#endif
+	if (stateLogic == sucess){
+		return sucess;
+	}
+	if (stateLogic != fail){
+		resultPodum = podumRecursion(Node,fault);
+	}
+	if (resultPodum == sucess){
+		return sucess;
+	}
+	#ifdef PDEBUG
+		printf("trying with inverted fault val \n");
+	#endif
+	PIgate.Val = NOTLUT[PIgate.Val];
+	stateLogic = forwardImp(Node,fault,PIgate);
+	#ifdef PDEBUG
+		printf("logic sim - 2 \n");
+	#endif
+	if (stateLogic == sucess){
+		return sucess;
+	}
+	else if (stateLogic != fail){
+		resultPodum = podumRecursion(Node,fault);
+	}
+	if (resultPodum == sucess){
+		return sucess;
+	}
+	PIgate.Val = XX;
+	stateLogic = forwardImp(Node,fault,PIgate);
+	#ifdef PDEBUG
+		printf("logic sim - 3\n");
+	#endif
+	if (stateLogic == sucess){
+		return sucess;;
+	}
+	else if (stateLogic == fail){
+		return fail;
+	}
 return fail;
 }
-
+/*checks if the D or DB is at the primary outputs*/
 state faultAtPO(GATE *Node){
 	int i = 0;
 	for(i=0;i<=Tgat;i++){ 
@@ -194,6 +200,7 @@ state faultAtPO(GATE *Node){
 	}
 	printf("\n");
 }
+/*printout the values of the primary inputs*/
 void printPI(GATE *Node){
 	int i = 0;
 	for(i=0;i<=Tgat;i++){ 
@@ -224,6 +231,7 @@ void printPI(GATE *Node){
 		printf("\n");
 	#endif
 }
+/*set all the gate values to XX*/
 void initalDontCare (GATE *Node){
 	int i = 0;
 	for(i=0;i<=Tgat;i++){ 
@@ -232,6 +240,7 @@ void initalDontCare (GATE *Node){
 		}
 	}
 }
+/*podem backtracking*/
 GATE_VAL backTrack(GATE *Node, GATE_VAL gate){
  int num_inversion = invertingGate(Node[gate.Id].Type);	// to get it self's type
  while (Node[gate.Id].Type != INPT){
@@ -433,7 +442,7 @@ return neutral;
 //fprintf(Ptr, "\n");
 
 }
-
+/*returns if a gate is suitable for a dfrontier*/
 int isDfront(GATE *Node,int id){
 		if (Node[id].Val !=  XX){
 			return 0;

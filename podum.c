@@ -2,11 +2,9 @@
 #include <time.h>
  
 #define TIMEOUT_VALUE 0.2
-//#define PRINTTOTERMINAL
-#define PRINTTOFILE
+//#define PRINTTOTERMINAL		//print test patterns to terminals
+#define PRINTTOFILE			//print results to file
 extern int NOTLUT [5] ;
-//					INPUT FROM BUFF NOT AND NAND OR NOR XOR XNOR
-int NONCTRLLUT [10]= { 1, 1,1,1,0,1,0,1,1,1 };
 
 extern FILE *Res;
 FILE *Ptr;
@@ -272,8 +270,6 @@ void initalDontCare (GATE *Node){
 GATE_VAL backTrack(GATE *Node, GATE_VAL gate){
  int num_inversion = invertingGate(Node[gate.Id].Type);	// to get it self's type
  while (Node[gate.Id].Type != INPT){
-	//printf("print gate id %d %d %d %d %d \n", gate.Id , Node[gate.Id].Val, Node[gate.Id].Fin->Id ,Node[Node[gate.Id].Fin->Id].Val , Node[gate.Id].Type);
-	//if ((gate.Id == 483) && (Node[gate.Id].Val == 1)) exit(0);
 	LIST *listPtr;
 	listPtr = Node[gate.Id].Fin;
 	while(listPtr!=NULL){
@@ -287,7 +283,6 @@ GATE_VAL backTrack(GATE *Node, GATE_VAL gate){
 			}
 			break;
 		}
-		//printf("point 2 \n");
 		listPtr=listPtr->Next;
 	}
 
@@ -319,7 +314,6 @@ int invertingGate(int type){	// 0 if non inveting else 1
 state forwardImp(GATE *Node ,GATE_VAL fault, GATE_VAL PI){
 	state state;
 	state = ForwardTraversal(Node,Tgat,fault,PI);
-	//printf("val - %d \n", Node[fault.Id].Val);
 	return state;
 }
 int xPathCheck(GATE *Node, GATE_VAL gate){
@@ -340,9 +334,7 @@ GATE_VAL getObjective(GATE *Node, GATE_VAL gate){
  }
  //if the fault has already been activated
  else {
-	//LIST *listPtr;
-	//listPtr = D_front;
-	
+
 	int d = 0;
 	int g = 0;
 	int v = 0;
@@ -353,8 +345,7 @@ GATE_VAL getObjective(GATE *Node, GATE_VAL gate){
 		while(listPtr2!=NULL){
 			if (Node[listPtr2->Id].Val == XX){
 				g = listPtr2->Id;	
-				//printf("d front gate %d type %d \n", g , Node[g].Type);
-	
+
 				if ((Node[d].Type == INPT) || (Node[d].Type == FROM) || (Node[d].Type == BUFF)){
 					v = gate.Val;
 				}
@@ -379,8 +370,6 @@ GATE_VAL getObjective(GATE *Node, GATE_VAL gate){
 			return gate;
 			break;
 		}
-
-		//printGate(gate);
 		return gate;
  		}
 	
@@ -391,13 +380,10 @@ GATE_VAL getObjective(GATE *Node, GATE_VAL gate){
 ***************************************************************************************************/
 state ForwardTraversal(GATE *Node,int Tgat, GATE_VAL fault, GATE_VAL PI)
 {
-//printf("logic sim \n");
 Node[PI.Id].Val = PI.Val;
 int i,j,k;
 int testPattern[] = {0,0,0,0,0};
 int currentInput = Npi;
-//printf("current input\n, %d ",currentInput);
-//
 FreeList(&D_front);
 i=j=k=0;
 int output [Npo];
@@ -405,7 +391,6 @@ int output [Npo];
 Node[PI.Id].Val = PI.Val;
 for(i=0;i<=Tgat;i++){ 
   	if(Node[i].Type!=0){
-		// printf(" i - %d \n", i);
 		resolveGate(Node,i,&currentInput,testPattern, 0);
 		if (i == fault.Id){
 			#ifdef PDEBUG
@@ -414,7 +399,6 @@ for(i=0;i<=Tgat;i++){
 			if (Node[i].Val == fault.Val){
 				if (fault.Val == 1){
 					Node[i].Val = DB; //STUCK AT 1
-					//printf("set val\n");
 				}
 				else{
 					Node[i].Val = D; //STUCK AT 0
@@ -422,7 +406,6 @@ for(i=0;i<=Tgat;i++){
 				#ifdef PDEBUG
 					printf("fault activated val - %d \n",Node[i].Val);
 				#endif
-				//printf("val - %d", Node[i].Val);
 				faultActivated = 1; 
 			}
 			else if (Node[i].Val == NOTLUT[fault.Val]){
@@ -443,8 +426,6 @@ for(i=0;i<=Tgat;i++){
 
 		if (isDfront(Node,i)){
 			InsertEle(&D_front,i);
-				// D_front->Id = i;
-				//D_front = D_front->Next;
 			}
 
 		if (Node[i].Nfo == 0){

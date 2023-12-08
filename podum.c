@@ -30,7 +30,13 @@ time_t startTime ;
 int masked = 0;
 int timeout = 0;
 double start_time;
-/*iterates the podem algo throughout the circuit*/
+/**
+ * @brief This function performs PODUM on all gates in a given `GATE` node.
+ *
+ * This function takes a `GATE` node as input and performs PODUM on all gates in the node. It initializes the `DontCare` list and calls the `podum()` function to perform PODUM on each gate. It prints the coverage, timeouts, and failures to the console and writes them to a file.
+ *
+ * @param[in] Node The `GATE` node to perform PODUM on.
+ */
 void podemall(GATE *Node){
 	Ptr = Res;
 	int i = 0;
@@ -68,7 +74,14 @@ void podemall(GATE *Node){
 	printf("Failures %f \n" , faliuresp);
 	fprintf(Ptr, "Failures %f \n" , faliuresp);
 }
-/*Handles the fault injection to recursion and its final return states*/
+/**
+ * @brief This function performs PODUM on a given `GATE` node and `GATE_VAL` fault.
+ *
+ * This function takes a `GATE` node and a `GATE_VAL` fault as input and performs PODUM on the given node. It initializes the `DontCare` list and calls the `podumRecursion()` function to perform the recursive PODUM algorithm. If the fault is detected, it prints the primary inputs of the circuit. If the fault is untestable, it increments the `masked` counter. If the function times out, it increments the `timeout` counter.
+ *
+ * @param[in] Node The `GATE` node to perform PODUM on.
+ * @param[in] fault The `GATE_VAL` fault to test.
+ */
 void podum(GATE *Node, GATE_VAL fault){
 	start_time = (double)clock()/CLOCKS_PER_SEC;
 	#ifdef PDEBUG
@@ -114,12 +127,27 @@ void podum(GATE *Node, GATE_VAL fault){
 	}
 	
 }
-/*print out GATE_VAL type as gate id and its value*/
+/**
+ * @brief This function prints the gate ID and value.
+ *
+ * This function takes a `GATE_VAL` structure as input and prints its ID and value.
+ *
+ * @param[in] gate The `GATE_VAL` structure to be printed.
+ */
 void printGate(GATE_VAL gate){
 		printf(" gate - %d \n", gate.Id);
 		printf(" gate value- %d \n", gate.Val);
 }
 /*This is the podem resursion that will recursively activate the fault and propergate it*/
+/**
+ * @brief This function performs PODUM recursion on a given `GATE` node and `GATE_VAL` fault.
+ *
+ * This function takes a `GATE` node and a `GATE_VAL` fault as input and performs PODUM recursion on the given node. It calculates the duration of the function and returns a timeout if the duration exceeds the `TIMEOUT_VALUE`. It then gets the objective gate and performs forward implication on the given node. If the forward implication is successful, it returns success. If the forward implication fails, it calls the `podumRecursion()` function recursively. If the recursive call is successful, it returns success. If the recursive call fails, it inverts the value of the PI gate and performs forward implication again. If the forward implication is successful, it returns success. If the forward implication fails, it calls the `podumRecursion()` function recursively. If the recursive call is successful, it returns success. If the recursive call fails, it sets the value of the PI gate to `XX` and performs forward implication again. If the forward implication is successful, it returns success. If the forward implication fails, it returns fail.
+ *
+ * @param[in] Node The `GATE` node to perform PODUM recursion on.
+ * @param[in] fault The `GATE_VAL` fault to test.
+ * @return The state of the PODUM recursion.
+ */
 state podumRecursion(GATE *Node, GATE_VAL fault){
 
 	double clock_end = (double)clock()/CLOCKS_PER_SEC;
@@ -144,7 +172,7 @@ state podumRecursion(GATE *Node, GATE_VAL fault){
 	GATE_VAL PIgate = backTrack(Node,gate);
 
 	state stateLogic = forwardImp(Node ,fault,PIgate);		//as backtrace sets the value to PI
-	
+
 	#ifdef PDEBUG
 		printf("logic sim - 1 \n");
 	#endif
@@ -359,7 +387,7 @@ GATE_VAL getObjective(GATE *Node, GATE_VAL gate){
 	}
 }
 
-/*tropological travesal
+/*tropological travesal - logic simulation and imply
 ***************************************************************************************************/
 state ForwardTraversal(GATE *Node,int Tgat, GATE_VAL fault, GATE_VAL PI)
 {

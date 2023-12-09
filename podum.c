@@ -149,17 +149,18 @@ void printGate(GATE_VAL gate){
  * @param[in] fault The `GATE_VAL` fault to test.
  * @return The state of the PODUM recursion.
  */
+
 state podumRecursion(GATE *Node, GATE_VAL fault){
 
 	double clock_end = (double)clock()/CLOCKS_PER_SEC;
 	double duration = (double)(clock_end - start_time);
-	state resultPodum;
-
+	
+	state resultPodum = neutral;
 	#ifdef PDEBUG
 		printf("podum top \n");
 	#endif
 	if ((duration > TIMEOUT_VALUE)||(resultPodum == timeout_)){
-		resultPodum = timeout_;
+		//resultPodum = timeout_;
 		return timeout_;
 	}
 

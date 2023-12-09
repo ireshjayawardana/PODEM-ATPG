@@ -38,8 +38,10 @@ double start_time;
 void podemall(GATE *Node){
 	Ptr = Res;
 	int i = 0;
+	int Nfaults = 0;
 	for (i = 0; i < Tgat+1 ; i++){
 		if (Node[i].Type != 0){
+			Nfaults++;
 			GATE_VAL fault;
 			fault.Id = i;
 			fault.Val = 0;
@@ -60,7 +62,7 @@ void podemall(GATE *Node){
 			podum(Node,fault);
 		}
 	}
-	float totFaults = 2 * Tgat;
+	float totFaults = 2 * Nfaults;
 	float cov = (((float)totFaults - ((float)masked + (float)timeout))/ (float)totFaults) * 100.0 ;
 	
 	printf("Coverage %.6f \n" , cov);
@@ -90,6 +92,7 @@ void podum(GATE *Node, GATE_VAL fault){
 	faultActivated = 0;
 	fault.Val = NOTLUT[fault.Val]; 		//TO GO WITH SA CONVENTION
 	initalDontCare(Node);
+	D_front = NULL;
 	FreeList(&D_front);
 	#ifdef PDEBUG
 		printf("init complete..\n");
@@ -155,7 +158,8 @@ state podumRecursion(GATE *Node, GATE_VAL fault){
 	#ifdef PDEBUG
 		printf("podum top \n");
 	#endif
-	if (duration > TIMEOUT_VALUE){
+	if ((duration > TIMEOUT_VALUE)||(resultPodum == timeout_)){
+		resultPodum = timeout_;
 		return timeout_;
 	}
 
@@ -183,6 +187,9 @@ state podumRecursion(GATE *Node, GATE_VAL fault){
 	if (resultPodum == sucess){
 		return sucess;
 	}
+	if (resultPodum == timeout_){
+		return timeout_;
+	}
 	#ifdef PDEBUG
 		printf("trying with inverted fault val \n");
 	#endif
@@ -199,6 +206,9 @@ state podumRecursion(GATE *Node, GATE_VAL fault){
 	}
 	if (resultPodum == sucess){
 		return sucess;
+	}
+	if (resultPodum == timeout_){
+		return timeout_;
 	}
 	PIgate.Val = XX;
 	stateLogic = forwardImp(Node,fault,PIgate);

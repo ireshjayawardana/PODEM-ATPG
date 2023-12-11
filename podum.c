@@ -474,12 +474,12 @@ int isDfront(GATE *Node,int id){
 			if ((Node[listPtr->Id].Val == D) || (Node[listPtr->Id].Val == DB)){
 				D_front_detected = 1;
 			}
-			else if (Node[listPtr->Id].Val == XX){
-				X_detected = 1;
-			}
+			// else if (Node[listPtr->Id].Val == XX){
+			// 	X_detected = 1;
+			// }
 			listPtr=listPtr->Next; 
 		}
-		if ((D_front_detected) && (X_detected)){
+		if ((D_front_detected)){//} && (X_detected)){
 			return 1;
 		}
 		else {

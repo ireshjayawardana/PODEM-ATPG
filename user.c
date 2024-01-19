@@ -190,8 +190,17 @@ switch(type){
 			}
       Node[i].Val = NOTLUT[Node[i].Val];
 			break;
+	case XOR :
+		listPtr = Node[i].Fin;
+		tempGateVal1 = Node[listPtr->Id].Val;
+		listPtr=listPtr->Next;
+		tempGateVal2 = Node[listPtr->Id].Val;
+		Node[i].Val = tempGateVal1 ^ tempGateVal2;
+		break;
 	default :
-		printf("ERROR");
+		printf("ERROR at : ");
+		printf("%d \n" ,i);
+		exit(1);
 		break;
 
 

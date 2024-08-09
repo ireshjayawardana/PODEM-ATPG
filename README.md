@@ -3,7 +3,10 @@
 
 this is done for the completion of ECE 522 VLSI circuit testing
 
+Go to src 
+
 Build - make
+
 Execution example - ./project c17.isc c17.pattern c17.res
 
 

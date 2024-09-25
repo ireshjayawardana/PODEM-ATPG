@@ -1,13 +1,13 @@
 # PODUM-ATPG
 ## _Path-Oriented Decision Making_
 
-this is done for the completion of ECE 522 VLSI circuit testing
+this is done for the completion of ECE 522 VLSI circuit testing - This is implementation of ATPG(complex software tool used to generate test patterns to test combinational circuits after manufacturing) algorithum.
 
 Go to src 
 
-Build - make
+Build -> make
 
-Execution example - ./project c17.isc c17.pattern c17.res
+Execution example -> ./project ./isc/c17.isc ./pattern/c17.pattern ./results/c17.res
 
 
 The T-PODEM (Path-Oriented Decision Making) algorithm is a widely used method for Automatic Test Pattern Generation (ATPG) in VLSI circuits. It was developed to address the limitations of the D-Algorithm, particularly in generating test vectors for circuits with error correction and translation features.
